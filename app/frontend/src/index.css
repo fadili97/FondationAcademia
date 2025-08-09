@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+  /* Light mode - Homepage inspired blue/indigo/purple theme */
+  --background: 220 40% 98%; /* Light blue-gray background like homepage */
+  --foreground: 220 50% 8%; /* Dark blue-gray text */
+  --muted: 220 15% 94%; /* Muted blue-gray */
+  --muted-foreground: 220 10% 45%; /* Muted text */
+  --popover: 220 40% 99%; /* Popover background */
+  --popover-foreground: 220 50% 8%; /* Popover text */
+  --card: 220 30% 99%; /* Card background with blue tint */
+  --card-foreground: 220 50% 8%; /* Card text */
+  --border: 220 15% 88%; /* Subtle blue borders */
+  --input: 220 15% 90%; /* Input backgrounds */
+  --primary: 245 75% 60%; /* Indigo matching homepage buttons */
+  --primary-foreground: 220 100% 98%; /* White text on primary */
+  --secondary: 220 20% 92%; /* Light blue-gray secondary */
+  --secondary-foreground: 220 60% 20%; /* Dark secondary text */
+  --accent: 270 75% 65%; /* Purple accent from homepage gradient */
+  --accent-foreground: 220 100% 98%; /* White text on accent */
+  --destructive: 0 84% 60%; /* Red for destructive actions */
+  --destructive-foreground: 220 100% 98%; /* White text */
+  --ring: 245 75% 60%; /* Focus ring matching primary */
+  --radius: 0.75rem; /* Slightly more rounded like homepage */
+}
+
+.dark {
+  /* Dark mode - Homepage inspired dark blue theme */
+  --background: 220 35% 8%; /* Dark blue-gray background */
+  --foreground: 220 20% 95%; /* Light text */
+  --muted: 220 25% 12%; /* Dark muted elements */
+  --muted-foreground: 220 15% 65%; /* Muted text in dark */
+  --popover: 220 40% 9%; /* Dark popover */
+  --popover-foreground: 220 20% 95%; /* Light popover text */
+  --card: 220 30% 10%; /* Dark card with blue tint */
+  --card-foreground: 220 20% 95%; /* Light card text */
+  --border: 220 20% 18%; /* Dark borders with blue tint */
+  --input: 220 25% 15%; /* Dark input backgrounds */
+  --primary: 245 75% 65%; /* Brighter indigo for dark mode */
+  --primary-foreground: 220 100% 98%; /* White text */
+  --secondary: 220 25% 15%; /* Dark secondary */
+  --secondary-foreground: 220 20% 85%; /* Light secondary text */
+  --accent: 270 75% 70%; /* Brighter purple for dark mode */
+  --accent-foreground: 220 100% 98%; /* White text */
+  --destructive: 0 84% 65%; /* Brighter red for dark mode */
+  --destructive-foreground: 220 100% 98%; /* White text */
+  --ring: 245 75% 65%; /* Focus ring matching primary */
+}
+}
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+.leaflet-container {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Improve Leaflet controls visibility */
+.leaflet-control-container .leaflet-control {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Custom scrollbar for sidebars */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.2);
+  border-radius: 3px;
+}

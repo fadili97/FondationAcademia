@@ -1,0 +1,50 @@
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.db
+*.sqlite3
+*.log
+
+# Django
+*.env
+.env
+db.sqlite3
+# /static
+/media
+*.pot
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.log
+
+# React
+node_modules/
+build/
+*.log
+*.env
+*.cache
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Docker
+*.dockerignore
+
+
+
+# Local environment files
+.env.local
+.env.*.local

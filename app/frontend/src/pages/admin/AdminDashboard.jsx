@@ -261,7 +261,7 @@ function AdminDashboard() {
                 </div>
               </div>
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="justify-start h-auto p-4"
               onClick={() => handleQuickAction('add-laureate')}
@@ -273,7 +273,7 @@ function AdminDashboard() {
                   {intl.formatMessage({ id: 'registerNewRecipient' })}
                 </div>
               </div>
-            </Button>
+            </Button> */}
             <Button
               variant="outline"
               className="justify-start h-auto p-4"

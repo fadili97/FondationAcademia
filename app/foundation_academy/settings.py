@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-i-p7a!^2f$$t!-8v_y@4zyhazpul9ouvd=+hf9ly6=8q+=f1iy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['fondationacademia-production.up.railway.app']
 
@@ -215,9 +215,9 @@ USE_TZ = True
 
 CORS_ALLOWED_ORIGINS = [
    
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:5173",
-    "http://localhost:5173",
+    # "http://127.0.0.1:8000",
+    # "http://127.0.0.1:5173",
+    # "http://localhost:5173",
 
 "https://fondationacademia-production.up.railway.app"
 

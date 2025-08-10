@@ -29,6 +29,9 @@ import LaureateDashboard from '@/pages/laureate/LaureateDashboard';
 import LaureateProfile from '@/pages/laureate/LaureateProfile';
 import LoanHistory from '@/pages/laureate/LoanHistory';
 import RepaymentSchedule from '@/pages/laureate/RepaymentSchedule';
+import CreateLaureate from '@/pages/admin/CreateLaureate';
+
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -87,6 +90,14 @@ const router = createBrowserRouter(
           element={
             <RoleBasedRoute requireAdmin={true}>
               <LoanManagement />
+            </RoleBasedRoute>
+          }
+        />
+        <Route
+          path="admin/createlaureates"
+          element={
+            <RoleBasedRoute requireAdmin={true}>
+              <CreateLaureate />
             </RoleBasedRoute>
           }
         />

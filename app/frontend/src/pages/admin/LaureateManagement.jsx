@@ -8,7 +8,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Search,
   Eye,
-  Edit,
   Filter,
   Users,
   Mail,
@@ -19,7 +18,8 @@ import {
   UserCheck,
   Clock,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Plus
 } from 'lucide-react';
 import { intl } from '@/i18n';
 import api from '@/login/api';
@@ -105,12 +105,12 @@ function LaureateManagement() {
     console.log('View profile for:', laureate);
   };
 
-  const handleEditLaureate = (laureate) => {
-    navigate(`/admin/laureates/${laureate.id}/edit`);
-  };
-
   const handleViewApplications = () => {
     navigate('/dashboard/admin/applications');
+  };
+
+  const handleCreateLaureates = () => {
+    navigate('/dashboard/admin/createlaureates');
   };
 
   // Handle search with debouncing
@@ -169,6 +169,7 @@ function LaureateManagement() {
 
   return (
     <div className="space-y-6 p-4 md:p-6">
+      {/* Header with Create Button */}
       <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
@@ -178,10 +179,16 @@ function LaureateManagement() {
             {intl.formatMessage({ id: 'manageScholarshipRecipients' })}
           </p>
         </div>
-        <Button onClick={handleViewApplications} className="md:w-auto" variant="outline">
-          <Clock className="h-4 w-4 mr-2" />
-          {intl.formatMessage({ id: 'reviewApplications' })}
-        </Button>
+        <div className="flex space-x-2">
+          <Button onClick={handleCreateLaureates} className="md:w-auto">
+            <Plus className="h-4 w-4 mr-2" />
+            Create Laureates
+          </Button>
+          <Button onClick={handleViewApplications} className="md:w-auto" variant="outline">
+            <Clock className="h-4 w-4 mr-2" />
+            {intl.formatMessage({ id: 'reviewApplications' })}
+          </Button>
+        </div>
       </div>
 
       {/* Info Alert */}
@@ -335,10 +342,16 @@ function LaureateManagement() {
                   <p className="text-sm text-muted-foreground">
                     {intl.formatMessage({ id: 'laureatesCreatedNote' })}
                   </p>
-                  <Button variant="outline" onClick={handleViewApplications}>
-                    <Clock className="h-4 w-4 mr-2" />
-                    {intl.formatMessage({ id: 'checkPendingApplications' })}
-                  </Button>
+                  <div className="flex gap-2 justify-center">
+                    <Button onClick={handleCreateLaureates}>
+                      <Plus className="h-4 w-4 mr-2" />
+                      Create Laureates
+                    </Button>
+                    <Button variant="outline" onClick={handleViewApplications}>
+                      <Clock className="h-4 w-4 mr-2" />
+                      {intl.formatMessage({ id: 'checkPendingApplications' })}
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
@@ -416,16 +429,6 @@ function LaureateManagement() {
                             >
                               <Eye className="h-4 w-4" />
                               <span className="sr-only">{intl.formatMessage({ id: 'viewProfile' })}</span>
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleEditLaureate(laureate)}
-                              className="h-8 w-8 p-0"
-                              title={intl.formatMessage({ id: 'editLaureate' })}
-                            >
-                              <Edit className="h-4 w-4" />
-                              <span className="sr-only">{intl.formatMessage({ id: 'editLaureate' })}</span>
                             </Button>
                             <Button
                               variant="ghost"
@@ -566,14 +569,10 @@ function LaureateManagement() {
               </div>
             </div>
             <div className="flex space-x-2 mt-6">
-              <Button onClick={() => handleEditLaureate(selectedLaureate)}>
-                <Edit className="h-4 w-4 mr-2" />
-                {intl.formatMessage({ id: 'editProfile' })}
-              </Button>
-              {/* <Button variant="outline">
+              <Button variant="outline">
                 <Mail className="h-4 w-4 mr-2" />
                 {intl.formatMessage({ id: 'sendEmail' })}
-              </Button> */}
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => handleToggleStatus(selectedLaureate.id, selectedLaureate.is_active)}

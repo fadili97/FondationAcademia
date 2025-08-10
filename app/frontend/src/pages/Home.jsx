@@ -12,7 +12,7 @@ import {
 import {
   LogOut, Menu, CircleUser, Globe, Users, CreditCard,
   BarChart3, AlertTriangle, User, History, Calendar, Home as HomeIcon,
-  PanelLeftClose, PanelLeftOpen, Bell, Settings
+  PanelLeftClose, PanelLeftOpen, Bell, Settings, Shield, ExternalLink
 } from 'lucide-react';
 import HomePage from '@/pages/public/HomePage';
 
@@ -59,9 +59,14 @@ function Home() {
   }, [userRole, navigate, location.pathname]);
 
   const handleNavigation = useCallback(
-    (path) => {
+    (path, external = false) => {
       setIsOpen(false);
-      navigate(path);
+      if (external) {
+        // Open external links in new tab
+        window.open(path, '_blank', 'noopener,noreferrer');
+      } else {
+        navigate(path);
+      }
     },
     [navigate]
   );
@@ -93,6 +98,11 @@ function Home() {
   const Header = React.memo(({ handleNavigation, onLanguageChange, currentLocale, toggleMobileMenu, toggleSidebar, sidebarCollapsed }) => {
     const userInfo = getUserInfo();
     const isAdmin = userInfo?.is_superuser === true;
+    
+    const handleDjangoAdmin = () => {
+      window.open('/admin/', '_blank', 'noopener,noreferrer');
+    };
+
     return (
       <header className="sticky top-0 z-10 flex h-14 sm:h-16 items-center gap-2 sm:gap-4 border-b bg-background/95 px-3 sm:px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
         <Button
@@ -123,6 +133,19 @@ function Home() {
           </span>
         </div>
         <div className="flex items-center gap-1 sm:gap-2 ml-auto">
+          {/* Django Admin Quick Access for Admins */}
+          {isAdmin && (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="relative hover:bg-accent hidden sm:flex"
+              onClick={handleDjangoAdmin}
+              title={intl.formatMessage({ id: 'djangoAdmin' }) || 'Django Admin'}
+            >
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-orange-600" />
+              <span className="sr-only">{intl.formatMessage({ id: 'djangoAdmin' })}</span>
+            </Button>
+          )}
           <Button variant="ghost" size="icon" className="relative hover:bg-accent hidden xs:flex">
             <Bell className="h-4 w-4 sm:h-5 sm:w-5" />
             <span className="absolute -top-1 -right-1 h-2 w-2 sm:h-3 sm:w-3 bg-destructive rounded-full"></span>
@@ -169,10 +192,26 @@ function Home() {
                   ? intl.formatMessage({ id: 'administratorRole' })
                   : intl.formatMessage({ id: 'laureateRole' })}
               </DropdownMenuItem>
+              {/* Django Admin in User Menu */}
+              {isAdmin && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={handleDjangoAdmin}
+                    className="cursor-pointer text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950"
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    {intl.formatMessage({ id: 'djangoAdmin' }) || 'Django Admin'}
+                    <ExternalLink className="h-3 w-3 ml-auto" />
+                  </DropdownMenuItem>
+                </>
+              )}
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => handleNavigation('/logout')}
                 className="cursor-pointer text-destructive hover:text-destructive hover:bg-destructive/10"
               >
+                <LogOut className="h-4 w-4 mr-2" />
                 {intl.formatMessage({ id: 'logout' })}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -183,45 +222,84 @@ function Home() {
   });
 
   // NavLink Component
-  const NavLink = ({ to, children, className = '', onClick, mobile, collapsed = false, icon, label }) => {
+  const NavLink = ({ to, children, className = '', onClick, mobile, collapsed = false, icon, label, external = false, description }) => {
     const location = useLocation();
-    const isActive = to === '/dashboard/admin' || to === '/laureate'
-  ? location.pathname === to
-  : to === '/' ? location.pathname === '/' : location.pathname.startsWith(to);
+    const isActive = !external && (to === '/dashboard/admin' || to === '/laureate'
+      ? location.pathname === to
+      : to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
     const paddingClass = collapsed ? 'px-3' : 'px-4';
     const baseClasses = `group flex items-center gap-3 rounded-xl ${paddingClass} py-3 transition-colors duration-200 relative text-sm font-medium`;
     const activeClasses = 'bg-primary/10 text-primary border border-primary/20 shadow-sm';
     const inactiveClasses = 'text-muted-foreground hover:bg-accent hover:text-accent-foreground';
+    const externalClasses = external ? 'text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:hover:bg-orange-950' : '';
+    
+    const handleClick = (e) => {
+      if (external) {
+        e.preventDefault();
+        onClick(to, true);
+      } else {
+        onClick(to);
+      }
+    };
+
     if (collapsed) {
       return (
         <div className="relative group/tooltip">
-          <Link
-            to={to}
-            className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses} ${className} justify-center w-full`}
-            onClick={() => onClick(to)}
-          >
-            {icon && React.cloneElement(icon, { className: "h-5 w-5" })}
-            {isActive && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
-            )}
-          </Link>
+          {external ? (
+            <button
+              onClick={handleClick}
+              className={`${baseClasses} ${externalClasses} ${className} justify-center w-full border-0 bg-transparent`}
+            >
+              {icon && React.cloneElement(icon, { className: "h-5 w-5" })}
+              {external && <ExternalLink className="h-3 w-3 absolute -top-1 -right-1" />}
+            </button>
+          ) : (
+            <Link
+              to={to}
+              className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses} ${className} justify-center w-full`}
+              onClick={handleClick}
+            >
+              {icon && React.cloneElement(icon, { className: "h-5 w-5" })}
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
+              )}
+            </Link>
+          )}
           <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-popover text-popover-foreground px-2 py-1 rounded-md text-xs whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 pointer-events-none z-50 shadow-lg border">
             {label}
+            {external && description && (
+              <div className="text-xs opacity-75 mt-1">{description}</div>
+            )}
           </div>
         </div>
       );
     }
-    return (
-      <Link
-        to={to}
-        className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses} ${mobile ? 'mx-[-0.65rem]' : ''} ${className}`}
-        onClick={() => onClick(to)}
-      >
-        {isActive && (
+
+    const content = (
+      <>
+        {isActive && !external && (
           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full" />
         )}
         {icon && React.cloneElement(icon, { className: "h-5 w-5" })}
-        <span>{label}</span>
+        <span className="flex-1">{label}</span>
+        {external && <ExternalLink className="h-4 w-4 opacity-50" />}
+      </>
+    );
+
+    return external ? (
+      <button
+        onClick={handleClick}
+        className={`${baseClasses} ${externalClasses} ${mobile ? 'mx-[-0.65rem]' : ''} ${className} w-full text-left border-0 bg-transparent`}
+      >
+        {content}
+      </button>
+    ) : (
+      <Link
+        to={to}
+        className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses} ${mobile ? 'mx-[-0.65rem]' : ''} ${className}`}
+        onClick={handleClick}
+      >
+        {content}
       </Link>
     );
   };
@@ -267,9 +345,42 @@ function Home() {
                 collapsed={collapsed}
                 icon={<Icon />}
                 label={translatedName}
+                external={item.external}
+                description={item.description}
               />
             );
           })}
+          
+          {/* Django Admin Link - Only for admins */}
+          {userIsAdmin && (
+            <>
+              {!collapsed && (
+                <div className="border-t pt-4 mt-4">
+                  <div className="text-xs text-muted-foreground mb-4 px-3">
+                    {intl.formatMessage({ id: 'systemAdmin' }) || 'System Administration'}
+                  </div>
+                </div>
+              )}
+              <a
+                href="/admin/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-3 rounded-xl py-3 text-muted-foreground transition-all hover:bg-secondary/80 hover:text-secondary-foreground bg-background ${collapsed ? 'px-3 justify-center' : 'px-4'}`}
+              >
+                <Shield className="h-5 w-5" />
+                {!collapsed && (
+                  <span>{intl.formatMessage({ id: "administratorPage" })}</span>
+                )}
+              </a>
+              {collapsed && (
+                <div className="relative group/tooltip">
+                  <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 bg-popover text-popover-foreground px-2 py-1 rounded-md text-xs whitespace-nowrap opacity-0 group-hover/tooltip:opacity-100 transition-opacity duration-200 pointer-events-none z-50 shadow-lg border">
+                    {intl.formatMessage({ id: "administratorPage" })}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
         </nav>
         <div className="border-t p-4">
           <div className={`text-xs text-muted-foreground text-center transition-all duration-300 ${collapsed ? 'opacity-0' : 'opacity-100'}`}>

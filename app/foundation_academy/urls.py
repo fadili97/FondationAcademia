@@ -54,8 +54,12 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             )
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
-urlpatterns = [
-    path("admin/", admin.site.urls),
+
+urlpatterns = [ path("admin/", admin.site.urls),]
+
+
+urlpatterns += [
+   
     
     # Authentication - Email/Password login
     path("api/token/", CustomTokenObtainPairView.as_view(), name="get_token"),

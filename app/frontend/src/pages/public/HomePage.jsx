@@ -10,7 +10,7 @@ import { getUserInfo } from '@/login/permissions'; // Change to getUserInfo inst
 import {
   GraduationCap, Heart, BookOpen, ArrowRight, Globe, Award, Users,
   TrendingUp, CheckCircle, Star, Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram,
-  Menu, LogIn, UserPlus
+  Menu, LogIn, UserPlus, LayoutDashboard, Settings
 } from 'lucide-react';
 
 function HomePage() {
@@ -22,6 +22,11 @@ function HomePage() {
   // Better authentication check - check if user info exists and has valid token
   const userInfo = getUserInfo();
   const isLoggedIn = userInfo !== null && userInfo !== undefined;
+  
+  // Get user role for dashboard routing
+  const userRole = userInfo?.role || userInfo?.user?.role;
+  const isAdmin = userRole === 'admin';
+  const isLaureate = userRole === 'laureate';
 
   const handleLogin = () => {
     navigate('/login');
@@ -33,11 +38,30 @@ function HomePage() {
     setMobileMenuOpen(false);
   };
 
+  const handleDashboard = () => {
+    if (isAdmin) {
+      navigate('/dashboard/admin');
+    } else if (isLaureate) {
+      navigate('/laureate');
+    }
+    setMobileMenuOpen(false);
+  };
+
   const handleLanguageChange = useCallback((newLocale) => {
     changeLanguage(newLocale);
     setCurrentLocale(newLocale);
     setKey(prevKey => prevKey + 1);
   }, []);
+
+  // Get dashboard button text based on role
+  const getDashboardButtonText = () => {
+    if (isAdmin) {
+      return intl.formatMessage({ id: 'homeAdminDashboard' }) || 'Admin Dashboard';
+    } else if (isLaureate) {
+      return intl.formatMessage({ id: 'homeLaureateDashboard' }) || 'My Dashboard';
+    }
+    return 'Dashboard';
+  };
 
   return (
     <div key={key} className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
@@ -82,8 +106,16 @@ function HomePage() {
 
               <ModeToggle />
 
-              {/* Only show auth buttons if not logged in */}
-              {!isLoggedIn && (
+              {/* Show dashboard button if logged in, auth buttons if not */}
+              {isLoggedIn ? (
+                <Button
+                  onClick={handleDashboard}
+                  className="h-9 px-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                >
+                  <LayoutDashboard className="h-4 w-4 mr-2" />
+                  {getDashboardButtonText()}
+                </Button>
+              ) : (
                 <>
                   <Button
                     variant="ghost"
@@ -151,33 +183,50 @@ function HomePage() {
                       </div>
                     </div>
 
-                    {/* Navigation Actions - Only show if not logged in */}
-                    {!isLoggedIn && (
-                      <div className="space-y-3 pt-6 border-t">
+                    {/* Navigation Actions */}
+                    <div className="space-y-3 pt-6 border-t">
+                      {isLoggedIn ? (
+                        // Show dashboard button if logged in
                         <Button
-                          variant="outline"
-                          onClick={handleLogin}
-                          className="w-full justify-start h-12"
-                        >
-                          <LogIn className="h-4 w-4 mr-3" />
-                          {intl.formatMessage({ id: 'homeLogin' })}
-                        </Button>
-
-                        <Button
-                          onClick={handleRegister}
+                          onClick={handleDashboard}
                           className="w-full justify-start h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
                         >
-                          <UserPlus className="h-4 w-4 mr-3" />
-                          {intl.formatMessage({ id: 'homeApply' })}
+                          <LayoutDashboard className="h-4 w-4 mr-3" />
+                          {getDashboardButtonText()}
                         </Button>
-                      </div>
-                    )}
+                      ) : (
+                        // Show auth buttons if not logged in
+                        <>
+                          <Button
+                            variant="outline"
+                            onClick={handleLogin}
+                            className="w-full justify-start h-12"
+                          >
+                            <LogIn className="h-4 w-4 mr-3" />
+                            {intl.formatMessage({ id: 'homeLogin' })}
+                          </Button>
+
+                          <Button
+                            onClick={handleRegister}
+                            className="w-full justify-start h-12 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white"
+                          >
+                            <UserPlus className="h-4 w-4 mr-3" />
+                            {intl.formatMessage({ id: 'homeApply' })}
+                          </Button>
+                        </>
+                      )}
+                    </div>
 
                     {/* Additional Info */}
                     <div className="pt-6 border-t">
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {intl.formatMessage({ id: 'homeTagline' })}
                       </p>
+                      {isLoggedIn && (
+                        <p className="text-xs text-indigo-600 dark:text-indigo-400 mt-2">
+                          {intl.formatMessage({ id: 'homeWelcomeBack' }) || `Welcome back, ${userInfo?.name || userInfo?.user?.name || 'User'}!`}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </SheetContent>
@@ -198,6 +247,25 @@ function HomePage() {
                 {intl.formatMessage({ id: 'homeHeroBadge' })}
               </span>
             </div>
+            
+            {/* Show personalized message if logged in */}
+            {isLoggedIn && (
+              <div className="mb-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-4">
+                  {intl.formatMessage({ id: 'homeWelcomeBack' }) || `Welcome back, ${userInfo?.name || userInfo?.user?.name || 'User'}!`}
+                </h2>
+                <Button
+                  size="lg"
+                  onClick={handleDashboard}
+                  className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105 rounded-2xl"
+                >
+                  <LayoutDashboard className="mr-3 h-5 w-5" />
+                  {getDashboardButtonText()}
+                  <ArrowRight className="ml-3 h-5 w-5" />
+                </Button>
+              </div>
+            )}
+            
             <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold text-gray-900 dark:text-white mb-6 leading-tight">
               <span className="block">{intl.formatMessage({ id: 'homeHeroTitle1' })}</span>
               <span className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
@@ -410,8 +478,15 @@ function HomePage() {
                 {intl.formatMessage({ id: 'homeFooterQuickLinks' })}
               </h4>
               <div className="space-y-3">
-                {/* Only show auth links if not logged in */}
-                {!isLoggedIn && (
+                {/* Show dashboard link if logged in, auth links if not */}
+                {isLoggedIn ? (
+                  <button
+                    onClick={handleDashboard}
+                    className="block text-gray-300 hover:text-indigo-300 transition-colors duration-200 font-medium"
+                  >
+                    {getDashboardButtonText()}
+                  </button>
+                ) : (
                   <>
                     <button
                       onClick={handleRegister}

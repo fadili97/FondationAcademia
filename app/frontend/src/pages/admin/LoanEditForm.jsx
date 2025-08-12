@@ -443,7 +443,7 @@ function LoanEditForm() {
                 variant="outline"
                 onClick={() => {
                   if (formData.laureate_id) {
-                    navigate(`/admin/laureates/${formData.laureate_id}/edit`);
+                    navigate(`/dashbaord/admin/laureates/${formData.laureate_id}/edit`);
                   } else {
                     setError(intl.formatMessage({ id: 'laureateNotAvailable' }));
                   }
@@ -473,7 +473,7 @@ function LoanEditForm() {
                 type="button"
                 variant="outline"
                 onClick={() => {
-                  navigate(`/admin/payments?loan=${id}`);
+                  navigate(`/dashboard/admin/payments?loan=${id}`);
                 }}
                 disabled={!hasPayments}
               >

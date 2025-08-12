@@ -106,7 +106,7 @@ function PaymentManagement() {
 
   const handleBack = () => {
     if (loanId) {
-      navigate(`/admin/loans/${loanId}/edit`);
+      navigate(`/dashbaord/admin/loans/${loanId}/edit`);
     } else {
       navigate('/dashboard/admin/loans');
     }

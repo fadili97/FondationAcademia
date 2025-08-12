@@ -126,7 +126,7 @@ function LoanManagement() {
   };
 
   const handleEditLoan = (loan) => {
-    navigate(`/admin/loans/${loan.id}/edit`);
+    navigate(`/dashbaord/admin/loans/${loan.id}/edit`);
   };
 
   const handleCreateLoan = () => {
@@ -135,7 +135,7 @@ function LoanManagement() {
 
   const handleViewLaureate = (loan) => {
     if (loan.laureate_info?.id) {
-      navigate(`/admin/laureates/${loan.laureate_info.id}/edit`);
+      navigate(`/dashbaord/admin/laureates/${loan.laureate_info.id}/edit`);
     }
   };
 
@@ -642,7 +642,7 @@ function LoanManagement() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate(`/admin/payments?loan=${selectedLoan.id}`)}
+                onClick={() => navigate(`/dashboard/admin/payments?loan=${selectedLoan.id}`)}
               >
                 <DollarSign className="h-4 w-4 mr-2" />
                 {intl.formatMessage({ id: 'paymentHistory' })}

@@ -159,11 +159,11 @@ function LaureateDashboard() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'text-green-600';
-      case 'overdue': return 'text-red-600';
-      case 'completed': return 'text-blue-600';
-      case 'no_loan': return 'text-gray-600';
-      default: return 'text-gray-600';
+      case 'active': return 'text-green-600 dark:text-green-400';
+      case 'overdue': return 'text-red-600 dark:text-red-400';
+      case 'completed': return 'text-blue-600 dark:text-blue-400';
+      case 'no_loan': return 'text-muted-foreground';
+      default: return 'text-muted-foreground';
     }
   };
 
@@ -184,15 +184,15 @@ function LaureateDashboard() {
     <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">
       {/* Header Section - Mobile Optimized */}
       <div className="space-y-2">
-        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
+        <h2 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
           {intl.formatMessage({ id: 'welcomeToDashboard' })}
         </h2>
         <div className="space-y-1">
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-muted-foreground">
             {intl.formatMessage({ id: 'trackScholarshipLoans' })}
           </p>
           {loanInfo.loanCount > 0 && (
-            <span className="inline-block text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
+            <span className="inline-block text-xs sm:text-sm font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
               {intl.formatMessage(
                 { id: 'loanCount' },
                 { count: loanInfo.loanCount, plural: loanInfo.loanCount !== 1 ? 's' : '' }
@@ -208,12 +208,12 @@ function LaureateDashboard() {
           {[...Array(4)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-4 bg-gray-200 rounded w-20 sm:w-24"></div>
-                <div className="h-4 w-4 bg-gray-200 rounded"></div>
+                <div className="h-4 bg-muted rounded w-20 sm:w-24"></div>
+                <div className="h-4 w-4 bg-muted rounded"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-6 sm:h-8 bg-gray-200 rounded w-12 sm:w-16 mb-1"></div>
-                <div className="h-3 bg-gray-200 rounded w-24 sm:w-32"></div>
+                <div className="h-6 sm:h-8 bg-muted rounded w-12 sm:w-16 mb-1"></div>
+                <div className="h-3 bg-muted rounded w-24 sm:w-32"></div>
               </CardContent>
             </Card>
           ))}
@@ -222,11 +222,11 @@ function LaureateDashboard() {
         /* No Loans State - Mobile Optimized */
         <Card>
           <CardContent className="p-6 sm:p-8 text-center">
-            <CreditCard className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
-            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
+            <CreditCard className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-muted-foreground" />
+            <h3 className="text-base sm:text-lg font-medium text-foreground mb-2">
               {intl.formatMessage({ id: 'noLoansYet' })}
             </h3>
-            <p className="text-sm sm:text-base text-gray-500 mb-4 max-w-md mx-auto">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 max-w-md mx-auto">
               {intl.formatMessage({ id: 'noLoansDescription' })}
             </p>
             <Button variant="outline" className="w-full sm:w-auto">
@@ -245,7 +245,7 @@ function LaureateDashboard() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold">{formatCurrency(loanInfo.totalAmount)}</div>
+              <div className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(loanInfo.totalAmount)}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 {loanInfo.loanCount > 1
                   ? intl.formatMessage({ id: 'acrossLoans' }, { count: loanInfo.loanCount })
@@ -262,7 +262,7 @@ function LaureateDashboard() {
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold text-orange-600">{formatCurrency(loanInfo.remainingBalance)}</div>
+              <div className="text-xl sm:text-2xl font-bold text-orange-600 dark:text-orange-400">{formatCurrency(loanInfo.remainingBalance)}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 {intl.formatMessage({ id: 'amountLeftToPay' })}
               </p>
@@ -277,7 +277,7 @@ function LaureateDashboard() {
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-xl sm:text-2xl font-bold">{formatCurrency(loanInfo.nextPaymentAmount)}</div>
+              <div className="text-xl sm:text-2xl font-bold text-foreground">{formatCurrency(loanInfo.nextPaymentAmount)}</div>
               <p className="text-xs text-muted-foreground mt-1">
                 {intl.formatMessage(
                   { id: 'dueDate' },
@@ -328,20 +328,20 @@ function LaureateDashboard() {
                 {loanInfo.totalAmount > 0 && (
                   <div>
                     <div className="flex justify-between text-sm mb-2">
-                      <span>{intl.formatMessage({ id: 'progress' })}</span>
-                      <span className="font-medium">
+                      <span className="text-foreground">{intl.formatMessage({ id: 'progress' })}</span>
+                      <span className="font-medium text-foreground">
                         {Math.round((loanInfo.totalPaid / loanInfo.totalAmount) * 100)}%
                       </span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-muted rounded-full h-2">
                       <div
-                        className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-green-600 dark:bg-green-500 h-2 rounded-full transition-all duration-300"
                         style={{
                           width: `${Math.round((loanInfo.totalPaid / loanInfo.totalAmount) * 100)}%`
                         }}
                       ></div>
                     </div>
-                    <div className="flex justify-between text-xs text-gray-600 mt-2">
+                    <div className="flex justify-between text-xs text-muted-foreground mt-2">
                       <span>{intl.formatMessage({ id: 'paid' }, { amount: loanInfo.totalPaid?.toLocaleString() })}</span>
                       <span>{intl.formatMessage({ id: 'remaining' }, { amount: loanInfo.remainingBalance?.toLocaleString() })}</span>
                     </div>
@@ -350,31 +350,31 @@ function LaureateDashboard() {
 
                 {/* Loan breakdown if multiple loans */}
                 {loanInfo.loanCount > 1 && loanInfo.loanBreakdown && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <h4 className="text-sm font-medium mb-3">{intl.formatMessage({ id: 'loanBreakdown' })}</h4>
+                  <div className="mt-4 p-3 bg-muted rounded-lg">
+                    <h4 className="text-sm font-medium mb-3 text-foreground">{intl.formatMessage({ id: 'loanBreakdown' })}</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {loanInfo.loanBreakdown.active > 0 && (
                         <div className="flex justify-between">
-                          <span>{intl.formatMessage({ id: 'active' })}:</span>
-                          <span className="font-medium text-green-600">{loanInfo.loanBreakdown.active}</span>
+                          <span className="text-muted-foreground">{intl.formatMessage({ id: 'active' })}:</span>
+                          <span className="font-medium text-green-600 dark:text-green-400">{loanInfo.loanBreakdown.active}</span>
                         </div>
                       )}
                       {loanInfo.loanBreakdown.completed > 0 && (
                         <div className="flex justify-between">
-                          <span>{intl.formatMessage({ id: 'completed' })}:</span>
-                          <span className="font-medium text-blue-600">{loanInfo.loanBreakdown.completed}</span>
+                          <span className="text-muted-foreground">{intl.formatMessage({ id: 'completed' })}:</span>
+                          <span className="font-medium text-blue-600 dark:text-blue-400">{loanInfo.loanBreakdown.completed}</span>
                         </div>
                       )}
                       {loanInfo.loanBreakdown.overdue > 0 && (
                         <div className="flex justify-between">
-                          <span>{intl.formatMessage({ id: 'overdue' })}:</span>
-                          <span className="font-medium text-red-600">{loanInfo.loanBreakdown.overdue}</span>
+                          <span className="text-muted-foreground">{intl.formatMessage({ id: 'overdue' })}:</span>
+                          <span className="font-medium text-red-600 dark:text-red-400">{loanInfo.loanBreakdown.overdue}</span>
                         </div>
                       )}
                       {loanInfo.loanBreakdown.suspended > 0 && (
                         <div className="flex justify-between">
-                          <span>{intl.formatMessage({ id: 'suspended' })}:</span>
-                          <span className="font-medium text-gray-600">{loanInfo.loanBreakdown.suspended}</span>
+                          <span className="text-muted-foreground">{intl.formatMessage({ id: 'suspended' })}:</span>
+                          <span className="font-medium text-muted-foreground">{loanInfo.loanBreakdown.suspended}</span>
                         </div>
                       )}
                     </div>
@@ -399,7 +399,7 @@ function LaureateDashboard() {
                 >
                   <Calendar className="h-4 w-4 mr-3 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'viewPaymentSchedule' })}</div>
+                    <div className="font-medium text-sm text-foreground">{intl.formatMessage({ id: 'viewPaymentSchedule' })}</div>
                     <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'seeUpcomingPayments' })}</div>
                   </div>
                 </Button>
@@ -411,7 +411,7 @@ function LaureateDashboard() {
                 >
                   <CreditCard className="h-4 w-4 mr-3 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'viewLoanHistory' })}</div>
+                    <div className="font-medium text-sm text-foreground">{intl.formatMessage({ id: 'viewLoanHistory' })}</div>
                     <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'seeAllYourLoans' })}</div>
                   </div>
                 </Button>
@@ -423,7 +423,7 @@ function LaureateDashboard() {
                 >
                   <User className="h-4 w-4 mr-3 flex-shrink-0" />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'updateProfile' })}</div>
+                    <div className="font-medium text-sm text-foreground">{intl.formatMessage({ id: 'updateProfile' })}</div>
                     <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'managePersonalInformation' })}</div>
                   </div>
                 </Button>
@@ -436,7 +436,7 @@ function LaureateDashboard() {
                 >
                   <Download className={`h-4 w-4 mr-3 flex-shrink-0 ${downloading ? 'animate-spin' : ''}`} />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm">
+                    <div className="font-medium text-sm text-foreground">
                       {downloading ? intl.formatMessage({ id: 'downloading' }) : intl.formatMessage({ id: 'downloadSchedule' })}
                     </div>
                     <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'exportPaymentPlan' })}</div>
@@ -451,7 +451,7 @@ function LaureateDashboard() {
                 >
                   <FileText className={`h-4 w-4 mr-3 flex-shrink-0 ${downloading ? 'animate-spin' : ''}`} />
                   <div className="min-w-0 flex-1">
-                    <div className="font-medium text-sm">
+                    <div className="font-medium text-sm text-foreground">
                       {downloading ? intl.formatMessage({ id: 'downloading' }) : intl.formatMessage({ id: 'downloadHistory' })}
                     </div>
                     <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'exportAllPayments' })}</div>
@@ -465,18 +465,18 @@ function LaureateDashboard() {
 
       {/* Overdue Alert - Mobile Optimized */}
       {loanInfo.status === 'overdue' && (
-        <Card className="border-red-200 bg-red-50">
+        <Card className="border-destructive/50 bg-destructive/5">
           <CardHeader className="pb-3">
-            <CardTitle className="text-red-800 flex items-center text-base sm:text-lg">
+            <CardTitle className="text-destructive flex items-center text-base sm:text-lg">
               <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
               <span>{intl.formatMessage({ id: 'paymentOverdue' })}</span>
             </CardTitle>
-            <CardDescription className="text-red-600 text-sm">
+            <CardDescription className="text-destructive/80 text-sm">
               {intl.formatMessage({ id: 'overdueAlertDescription' })}
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-0">
-            <Button className="bg-red-600 text-white hover:bg-red-700 w-full sm:w-auto">
+            <Button className="bg-destructive text-destructive-foreground hover:bg-destructive/90 w-full sm:w-auto">
               <Phone className="h-4 w-4 mr-2" />
               {intl.formatMessage({ id: 'contactFinanceOffice' })}
             </Button>

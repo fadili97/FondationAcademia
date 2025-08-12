@@ -82,15 +82,15 @@ function LaureateProfile() {
     return (
       <div className="p-3 sm:p-6">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-48"></div>
-          <div className="h-4 bg-gray-200 rounded w-64"></div>
+          <div className="h-8 bg-muted rounded w-48"></div>
+          <div className="h-4 bg-muted rounded w-64"></div>
           <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2">
             {[...Array(2)].map((_, i) => (
               <div key={i} className="border rounded-lg p-4 space-y-4">
-                <div className="h-6 bg-gray-200 rounded w-32"></div>
+                <div className="h-6 bg-muted rounded w-32"></div>
                 <div className="space-y-3">
                   {[...Array(4)].map((_, j) => (
-                    <div key={j} className="h-10 bg-gray-200 rounded"></div>
+                    <div key={j} className="h-10 bg-muted rounded"></div>
                   ))}
                 </div>
               </div>
@@ -106,10 +106,10 @@ function LaureateProfile() {
       {/* Header Section - Mobile Optimized */}
       <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-start">
         <div className="space-y-1 sm:space-y-2">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold text-foreground leading-tight">
             {intl.formatMessage({ id: 'myProfile' })}
           </h2>
-          <p className="text-sm sm:text-base text-gray-600">
+          <p className="text-sm sm:text-base text-muted-foreground">
             {intl.formatMessage({ id: 'managePersonalInformation' })}
           </p>
         </div>
@@ -189,9 +189,9 @@ function LaureateProfile() {
                 id="email"
                 value={profile.user.email || ''}
                 disabled={true}
-                className="bg-gray-50 h-10"
+                className="bg-muted h-10"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {intl.formatMessage({ id: 'emailCannotBeChanged' })}
               </p>
             </div>
@@ -265,9 +265,9 @@ function LaureateProfile() {
                 id="student_id"
                 value={profile.student_id || ''}
                 disabled={true}
-                className="bg-gray-50 h-10 font-mono"
+                className="bg-muted h-10 font-mono"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 {intl.formatMessage({ id: 'studentIdCannotBeChanged' })}
               </p>
             </div>
@@ -371,7 +371,7 @@ function LaureateProfile() {
 
       {/* Mobile Edit/Save Button - Fixed Bottom on Mobile */}
       {isEditing && (
-        <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-background border-t border-border shadow-lg">
           <div className="flex gap-3">
             <Button
               variant="outline"

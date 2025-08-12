@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, DollarSign, Clock } from 'lucide-react';
-import { intl } from '@/i18n'; // Import intl from the i18n module
+import { Calendar, DollarSign, Clock, CheckCircle, AlertCircle, XCircle, CircleDot } from 'lucide-react';
+import { intl } from '@/i18n';
 import api from '@/login/api';
 import { formatCurrency } from '@/utils/currency';
-
-
 
 function RepaymentSchedule() {
   const [payments, setPayments] = useState([]);
@@ -39,182 +37,312 @@ function RepaymentSchedule() {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return '✓';
-      case 'pending': return '○';
-      case 'overdue': return '⚠';
-      case 'missed': return '✗';
-      default: return '○';
+      case 'completed': return CheckCircle;
+      case 'pending': return CircleDot;
+      case 'overdue': return AlertCircle;
+      case 'missed': return XCircle;
+      default: return CircleDot;
     }
   };
 
+  const getStatusBgColor = (status) => {
+    switch (status) {
+      case 'completed': return 'bg-green-50 border-green-200';
+      case 'pending': return 'bg-blue-50 border-blue-200';
+      case 'overdue': return 'bg-red-50 border-red-200';
+      case 'missed': return 'bg-gray-50 border-gray-200';
+      default: return 'bg-gray-50 border-gray-200';
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">
+        {/* Loading Header */}
+        <div className="space-y-2">
+          <div className="h-8 sm:h-10 bg-gray-200 rounded w-56 animate-pulse"></div>
+          <div className="h-4 bg-gray-200 rounded w-72 animate-pulse"></div>
+        </div>
+        
+        {/* Loading Summary */}
+        <Card className="animate-pulse">
+          <CardHeader>
+            <div className="h-6 bg-gray-200 rounded w-40"></div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="text-center space-y-2">
+                  <div className="h-8 bg-gray-200 rounded w-12 mx-auto"></div>
+                  <div className="h-4 bg-gray-200 rounded w-20 mx-auto"></div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Loading Payment Cards */}
+        <div className="space-y-3">
+          {[...Array(3)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-4">
+                <div className="space-y-3">
+                  {[...Array(4)].map((_, j) => (
+                    <div key={j} className="flex justify-between">
+                      <div className="h-4 bg-gray-200 rounded w-20"></div>
+                      <div className="h-4 bg-gray-200 rounded w-24"></div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6 p-4 sm:p-6">
-      <div>
-        <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">
+      {/* Header Section - Mobile Optimized */}
+      <div className="space-y-1 sm:space-y-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
           {intl.formatMessage({ id: 'repaymentSchedule' })}
         </h2>
-        <p className="text-muted-foreground mt-2 text-sm sm:text-base">
+        <p className="text-sm sm:text-base text-gray-600">
           {intl.formatMessage({ id: 'trackPaymentSchedule' })}
         </p>
       </div>
-      {/* Payment Summary */}
+
+      {/* Payment Summary - Mobile Responsive */}
       <Card>
-        <CardHeader>
+        <CardHeader className="pb-4">
           <CardTitle className="flex items-center text-lg sm:text-xl">
-            <DollarSign className="h-5 w-5 mr-2" />
+            <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
             {intl.formatMessage({ id: 'paymentSummary' })}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 grid-cols-2 sm:grid-cols-4">
-            <div className="text-center">
+          <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
+            <div className="text-center p-3 bg-green-50 rounded-lg border border-green-200">
               <p className="text-xl sm:text-2xl font-bold text-green-600">
                 {payments.filter(p => p.status === 'completed').length}
               </p>
-              <p className="text-sm text-muted-foreground">{intl.formatMessage({ id: 'completedPayments' })}</p>
+              <p className="text-xs sm:text-sm text-green-700 font-medium mt-1">
+                {intl.formatMessage({ id: 'completedPayments' })}
+              </p>
             </div>
-            <div className="text-center">
+            
+            <div className="text-center p-3 bg-blue-50 rounded-lg border border-blue-200">
               <p className="text-xl sm:text-2xl font-bold text-blue-600">
                 {payments.filter(p => p.status === 'pending').length}
               </p>
-              <p className="text-sm text-muted-foreground">{intl.formatMessage({ id: 'pendingPayments' })}</p>
+              <p className="text-xs sm:text-sm text-blue-700 font-medium mt-1">
+                {intl.formatMessage({ id: 'pendingPayments' })}
+              </p>
             </div>
-            <div className="text-center">
+            
+            <div className="text-center p-3 bg-red-50 rounded-lg border border-red-200">
               <p className="text-xl sm:text-2xl font-bold text-red-600">
                 {payments.filter(p => p.status === 'overdue').length}
               </p>
-              <p className="text-sm text-muted-foreground">{intl.formatMessage({ id: 'overduePayments' })}</p>
+              <p className="text-xs sm:text-sm text-red-700 font-medium mt-1">
+                {intl.formatMessage({ id: 'overduePayments' })}
+              </p>
             </div>
-            <div className="text-center">
-              <p className="text-xl sm:text-2xl font-bold text-muted-foreground">
-  {formatCurrency(payments
-    .filter(p => p.status === 'completed')
-    .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0))}
-</p>
-              <p className="text-sm text-muted-foreground">{intl.formatMessage({ id: 'totalPaid' })}</p>
+            
+            <div className="text-center p-3 bg-gray-50 rounded-lg border border-gray-200 col-span-2 lg:col-span-1">
+              <p className="text-lg sm:text-xl font-bold text-gray-700 truncate">
+                {formatCurrency(payments
+                  .filter(p => p.status === 'completed')
+                  .reduce((sum, p) => sum + parseFloat(p.amount || 0), 0))}
+              </p>
+              <p className="text-xs sm:text-sm text-gray-600 font-medium mt-1">
+                {intl.formatMessage({ id: 'totalPaid' })}
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
+
       {/* Payment Schedule */}
-      {loading ? (
+      {payments.length === 0 ? (
         <Card>
-          <CardContent className="p-6 text-center">
-            <span className="text-muted-foreground text-sm sm:text-base">
-              {intl.formatMessage({ id: 'loadingPaymentSchedule' })}
-            </span>
-          </CardContent>
-        </Card>
-      ) : payments.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-center">
-            <span className="text-muted-foreground text-sm sm:text-base">
+          <CardContent className="p-6 sm:p-8 text-center">
+            <Calendar className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
               {intl.formatMessage({ id: 'noPaymentSchedule' })}
-            </span>
+            </h3>
+            <p className="text-sm text-gray-500">
+              Your payment schedule will appear here once loans are activated.
+            </p>
           </CardContent>
         </Card>
       ) : (
         <Card>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <CardTitle className="flex items-center text-lg sm:text-xl">
-              <Calendar className="h-5 w-5 mr-2" />
-              {intl.formatMessage({ id: 'paymentSchedule' })} ({intl.formatMessage({ id: 'paymentsCount' }, { count: payments.length })})
+              <Calendar className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+              <span className="truncate">
+                {intl.formatMessage({ id: 'paymentSchedule' })}
+              </span>
+              <Badge variant="outline" className="ml-2 hidden sm:inline-flex">
+                {intl.formatMessage({ id: 'paymentsCount' }, { count: payments.length })}
+              </Badge>
             </CardTitle>
-            <CardDescription className="text-sm">{intl.formatMessage({ id: 'paymentScheduleDesc' })}</CardDescription>
-          </CardHeader>
-          <CardContent className="p-0">
-            {/* Mobile: Card-based layout */}
-            <div className="block sm:hidden space-y-4 p-4">
-              {payments.map((payment) => (
-                <Card key={payment.id} className="border shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'status' })}</span>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg">{getStatusIcon(payment.status)}</span>
-                          <Badge variant={getStatusColor(payment.status)}>{intl.formatMessage({ id: `${payment.status}Status` })}</Badge>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'paymentNumber' })}</span>
-                        <span className="font-mono text-sm">#{payment.id}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'amount' })}</span>
-<span className="font-bold">{formatCurrency(payment.amount)}</span>                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'dueDate' })}</span>
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{new Date(payment.due_date).toLocaleDateString(intl.locale)}</span>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'paidDate' })}</span>
-                        {payment.paid_date ? (
-                          <div className="flex items-center space-x-1">
-                            <Clock className="h-4 w-4 text-green-500" />
-                            <span className="text-sm">{new Date(payment.paid_date).toLocaleDateString(intl.locale)}</span>
-                          </div>
-                        ) : (
-                          <span className="text-muted-foreground text-sm">{intl.formatMessage({ id: 'notAvailable' })}</span>
-                        )}
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium">{intl.formatMessage({ id: 'paymentMethod' })}</span>
-                        <span className="text-sm">{payment.payment_method || intl.formatMessage({ id: 'notAvailable' })}</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <CardDescription className="text-sm">
+              {intl.formatMessage({ id: 'paymentScheduleDesc' })}
+            </CardDescription>
+            {/* Mobile Badge */}
+            <div className="sm:hidden">
+              <Badge variant="outline" className="text-xs">
+                {intl.formatMessage({ id: 'paymentsCount' }, { count: payments.length })}
+              </Badge>
             </div>
-            {/* Desktop: Table layout */}
-            <div className="hidden sm:block overflow-x-auto">
+          </CardHeader>
+          
+          <CardContent className="p-0">
+            {/* Mobile: Enhanced Card Layout */}
+            <div className="block lg:hidden space-y-3 p-3 sm:p-4">
+              {payments.map((payment, index) => {
+                const StatusIcon = getStatusIcon(payment.status);
+                return (
+                  <Card key={payment.id} className={`border ${getStatusBgColor(payment.status)} transition-all duration-200 hover:shadow-md`}>
+                    <CardContent className="p-4">
+                      {/* Header Row */}
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-2">
+                          <div className="w-8 h-8 rounded-full bg-white border-2 border-current flex items-center justify-center">
+                            <span className="text-xs font-bold">{index + 1}</span>
+                          </div>
+                          <span className="font-mono text-sm text-gray-600">#{payment.id}</span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <StatusIcon className="h-4 w-4" />
+                          <Badge variant={getStatusColor(payment.status)} className="text-xs">
+                            {intl.formatMessage({ id: `${payment.status}Status` })}
+                          </Badge>
+                        </div>
+                      </div>
+
+                      {/* Amount - Prominent Display */}
+                      <div className="text-center py-2 mb-3 bg-white/70 rounded-lg">
+                        <p className="text-2xl font-bold text-gray-900">
+                          {formatCurrency(payment.amount)}
+                        </p>
+                        <p className="text-xs text-gray-600 font-medium">Payment Amount</p>
+                      </div>
+
+                      {/* Payment Details Grid */}
+                      <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 text-sm">
+                        <div className="flex items-center justify-between sm:flex-col sm:items-start sm:space-y-1">
+                          <span className="font-medium text-gray-700 flex items-center">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {intl.formatMessage({ id: 'dueDate' })}
+                          </span>
+                          <span className="text-gray-900 font-semibold sm:text-base">
+                            {new Date(payment.due_date).toLocaleDateString(intl.locale)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between sm:flex-col sm:items-start sm:space-y-1">
+                          <span className="font-medium text-gray-700 flex items-center">
+                            <Clock className="h-3 w-3 mr-1" />
+                            {intl.formatMessage({ id: 'paidDate' })}
+                          </span>
+                          {payment.paid_date ? (
+                            <span className="text-green-600 font-semibold sm:text-base">
+                              {new Date(payment.paid_date).toLocaleDateString(intl.locale)}
+                            </span>
+                          ) : (
+                            <span className="text-gray-500 text-xs sm:text-sm">
+                              {intl.formatMessage({ id: 'notAvailable' })}
+                            </span>
+                          )}
+                        </div>
+                        
+                        <div className="flex items-center justify-between sm:flex-col sm:items-start sm:space-y-1 sm:col-span-2">
+                          <span className="font-medium text-gray-700">
+                            {intl.formatMessage({ id: 'paymentMethod' })}
+                          </span>
+                          <span className="text-gray-900 text-sm">
+                            {payment.payment_method || intl.formatMessage({ id: 'notAvailable' })}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+
+            {/* Desktop: Enhanced Table Layout */}
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full">
-                <thead className="border-b bg-muted/50">
+                <thead className="border-b bg-gray-50/80">
                   <tr>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'status' })}</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'paymentNumber' })}</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'amount' })}</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'dueDate' })}</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'paidDate' })}</th>
-                    <th className="text-left p-4 font-medium text-muted-foreground text-sm">{intl.formatMessage({ id: 'paymentMethod' })}</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">#</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">{intl.formatMessage({ id: 'status' })}</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">{intl.formatMessage({ id: 'amount' })}</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">{intl.formatMessage({ id: 'dueDate' })}</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">{intl.formatMessage({ id: 'paidDate' })}</th>
+                    <th className="text-left p-4 font-semibold text-gray-700 text-sm">{intl.formatMessage({ id: 'paymentMethod' })}</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {payments.map((payment) => (
-                    <tr key={payment.id} className="border-b hover:bg-muted/30">
-                      <td className="p-4">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg">{getStatusIcon(payment.status)}</span>
-                          <Badge variant={getStatusColor(payment.status)}>{intl.formatMessage({ id: `${payment.status}Status` })}</Badge>
-                        </div>
-                      </td>
-                      <td className="p-4 font-mono text-sm">#{payment.id}</td>
-                     <td className="p-4 font-bold">{formatCurrency(payment.amount)}</td>
-                      <td className="p-4">
-                        <div className="flex items-center space-x-1">
-                          <Calendar className="h-4 w-4 text-muted-foreground" />
-                          <span>{new Date(payment.due_date).toLocaleDateString(intl.locale)}</span>
-                        </div>
-                      </td>
-                      <td className="p-4">
-                        {payment.paid_date ? (
-                          <div className="flex items-center space-x-1">
-                            <Clock className="h-4 w-4 text-green-500" />
-                            <span>{new Date(payment.paid_date).toLocaleDateString(intl.locale)}</span>
+                  {payments.map((payment, index) => {
+                    const StatusIcon = getStatusIcon(payment.status);
+                    return (
+                      <tr key={payment.id} className="border-b hover:bg-gray-50/50 transition-colors">
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center">
+                              <span className="text-xs font-bold text-gray-600">{index + 1}</span>
+                            </div>
+                            <span className="font-mono text-sm text-gray-600">#{payment.id}</span>
                           </div>
-                        ) : (
-                          <span className="text-muted-foreground">{intl.formatMessage({ id: 'notAvailable' })}</span>
-                        )}
-                      </td>
-                      <td className="p-4">
-                        {payment.payment_method || <span className="text-muted-foreground">{intl.formatMessage({ id: 'notAvailable' })}</span>}
-                      </td>
-                    </tr>
-                  ))}
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <StatusIcon className="h-4 w-4" />
+                            <Badge variant={getStatusColor(payment.status)}>
+                              {intl.formatMessage({ id: `${payment.status}Status` })}
+                            </Badge>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <span className="font-bold text-lg">{formatCurrency(payment.amount)}</span>
+                        </td>
+                        <td className="p-4">
+                          <div className="flex items-center space-x-2">
+                            <Calendar className="h-4 w-4 text-gray-400" />
+                            <span className="font-medium">
+                              {new Date(payment.due_date).toLocaleDateString(intl.locale)}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          {payment.paid_date ? (
+                            <div className="flex items-center space-x-2">
+                              <Clock className="h-4 w-4 text-green-500" />
+                              <span className="text-green-600 font-medium">
+                                {new Date(payment.paid_date).toLocaleDateString(intl.locale)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-gray-400">{intl.formatMessage({ id: 'notAvailable' })}</span>
+                          )}
+                        </td>
+                        <td className="p-4">
+                          <span className="text-gray-700">
+                            {payment.payment_method || (
+                              <span className="text-gray-400">{intl.formatMessage({ id: 'notAvailable' })}</span>
+                            )}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

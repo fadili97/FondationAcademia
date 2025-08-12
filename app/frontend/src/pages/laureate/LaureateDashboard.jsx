@@ -3,11 +3,9 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditCard, Calendar, CheckCircle, AlertCircle, User, FileText, Phone, Download } from 'lucide-react';
-import { intl } from '@/i18n'; // Import intl from the i18n module
+import { intl } from '@/i18n';
 import api from '@/login/api';
 import { formatCurrency } from '@/utils/currency';
-
-
 
 function LaureateDashboard() {
   const location = useLocation();
@@ -40,7 +38,6 @@ function LaureateDashboard() {
       setLoanInfo(response.data);
     } catch (error) {
       console.error('Error fetching loan info:', error);
-      // Set default state on error
       setLoanInfo({
         totalAmount: 0,
         remainingBalance: 0,
@@ -92,16 +89,13 @@ function LaureateDashboard() {
   const downloadPaymentSchedule = async () => {
     setDownloading(true);
     try {
-      // Fetch the payment schedule data
       const response = await api.get('/api/payments/payments/my_schedule/');
       const payments = response.data;
       if (!payments || payments.length === 0) {
         alert(intl.formatMessage({ id: 'noPaymentSchedule' }));
         return;
       }
-      // Convert to CSV format
       const csvContent = convertToCSV(payments);
-      // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       if (link.download !== undefined) {
@@ -116,7 +110,6 @@ function LaureateDashboard() {
       }
     } catch (error) {
       console.error('Error downloading payment schedule:', error);
-      // Handle specific error cases
       if (error.response?.status === 404) {
         alert(intl.formatMessage({ id: 'noPaymentScheduleFound' }));
       } else if (error.response?.status === 400) {
@@ -129,20 +122,17 @@ function LaureateDashboard() {
     }
   };
 
-  // Alternative function to download all payment history (including completed payments)
+  // Download payment history function
   const downloadPaymentHistory = async () => {
     setDownloading(true);
     try {
-      // Fetch all payment history
       const response = await api.get('/api/payments/payments/my_payments/');
       const payments = response.data;
       if (!payments || payments.length === 0) {
         alert(intl.formatMessage({ id: 'noPaymentHistory' }));
         return;
       }
-      // Convert to CSV format
       const csvContent = convertToCSV(payments);
-      // Create and download file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       if (link.download !== undefined) {
@@ -191,94 +181,104 @@ function LaureateDashboard() {
   };
 
   return (
-    <div className="space-y-6 p-4">
-      <div>
-        <h2 className="text-3xl font-bold text-gray-900">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">
+      {/* Header Section - Mobile Optimized */}
+      <div className="space-y-2">
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
           {intl.formatMessage({ id: 'welcomeToDashboard' })}
         </h2>
-        <p className="text-gray-600 mt-2">
-          {intl.formatMessage({ id: 'trackScholarshipLoans' })}
+        <div className="space-y-1">
+          <p className="text-sm sm:text-base text-gray-600">
+            {intl.formatMessage({ id: 'trackScholarshipLoans' })}
+          </p>
           {loanInfo.loanCount > 0 && (
-            <span className="ml-2 text-sm font-medium">
+            <span className="inline-block text-xs sm:text-sm font-medium text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full">
               {intl.formatMessage(
                 { id: 'loanCount' },
                 { count: loanInfo.loanCount, plural: loanInfo.loanCount !== 1 ? 's' : '' }
               )}
             </span>
           )}
-        </p>
+        </div>
       </div>
+
       {loading ? (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        /* Loading State - Mobile Responsive Grid */
+        <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {[...Array(4)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
+                <div className="h-4 bg-gray-200 rounded w-20 sm:w-24"></div>
                 <div className="h-4 w-4 bg-gray-200 rounded"></div>
               </CardHeader>
               <CardContent>
-                <div className="h-8 bg-gray-200 rounded w-16 mb-1"></div>
-                <div className="h-3 bg-gray-200 rounded w-32"></div>
+                <div className="h-6 sm:h-8 bg-gray-200 rounded w-12 sm:w-16 mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded w-24 sm:w-32"></div>
               </CardContent>
             </Card>
           ))}
         </div>
       ) : loanInfo.status === 'no_loan' ? (
+        /* No Loans State - Mobile Optimized */
         <Card>
-          <CardContent className="p-8 text-center">
-            <CreditCard className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <CardContent className="p-6 sm:p-8 text-center">
+            <CreditCard className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-3 sm:mb-4 text-gray-300" />
+            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-2">
               {intl.formatMessage({ id: 'noLoansYet' })}
             </h3>
-            <p className="text-gray-500 mb-4">
+            <p className="text-sm sm:text-base text-gray-500 mb-4 max-w-md mx-auto">
               {intl.formatMessage({ id: 'noLoansDescription' })}
             </p>
-            <Button variant="outline">
+            <Button variant="outline" className="w-full sm:w-auto">
               {intl.formatMessage({ id: 'contactSupport' })}
             </Button>
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        /* Loan Info Cards - Mobile Responsive Grid */
+        <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs sm:text-sm font-medium">
                 {intl.formatMessage({ id: 'totalLoanAmount' })}
               </CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-<div className="text-2xl font-bold">{formatCurrency(loanInfo.totalAmount)}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-xl sm:text-2xl font-bold">{formatCurrency(loanInfo.totalAmount)}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 {loanInfo.loanCount > 1
                   ? intl.formatMessage({ id: 'acrossLoans' }, { count: loanInfo.loanCount })
                   : intl.formatMessage({ id: 'originalLoanAmount' })}
               </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs sm:text-sm font-medium">
                 {intl.formatMessage({ id: 'remainingBalance' })}
               </CardTitle>
               <CreditCard className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-<div className="text-2xl font-bold text-orange-600">{formatCurrency(loanInfo.remainingBalance)}</div>              <p className="text-xs text-muted-foreground">
+              <div className="text-xl sm:text-2xl font-bold text-orange-600">{formatCurrency(loanInfo.remainingBalance)}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 {intl.formatMessage({ id: 'amountLeftToPay' })}
               </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs sm:text-sm font-medium">
                 {intl.formatMessage({ id: 'nextPayment' })}
               </CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-<div className="text-2xl font-bold">{formatCurrency(loanInfo.nextPaymentAmount)}</div>
-              <p className="text-xs text-muted-foreground">
+              <div className="text-xl sm:text-2xl font-bold">{formatCurrency(loanInfo.nextPaymentAmount)}</div>
+              <p className="text-xs text-muted-foreground mt-1">
                 {intl.formatMessage(
                   { id: 'dueDate' },
                   { date: loanInfo.nextPaymentDate ? new Date(loanInfo.nextPaymentDate).toLocaleDateString(intl.locale) : intl.formatMessage({ id: 'notApplicable' }) }
@@ -286,9 +286,10 @@ function LaureateDashboard() {
               </p>
             </CardContent>
           </Card>
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+              <CardTitle className="text-xs sm:text-sm font-medium">
                 {intl.formatMessage({ id: 'overallStatus' })}
               </CardTitle>
               {(() => {
@@ -297,10 +298,10 @@ function LaureateDashboard() {
               })()}
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold capitalize ${getStatusColor(loanInfo.status)}`}>
+              <div className={`text-xl sm:text-2xl font-bold capitalize ${getStatusColor(loanInfo.status)}`}>
                 {getStatusText(loanInfo.status)}
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground mt-1">
                 {loanInfo.activeLoanCount > 0
                   ? intl.formatMessage(
                       { id: 'activeLoanCount' },
@@ -312,13 +313,15 @@ function LaureateDashboard() {
           </Card>
         </div>
       )}
-      {/* Only show detailed info if loans exist */}
+
+      {/* Detailed Info Section - Only show if loans exist */}
       {loanInfo.status !== 'no_loan' && (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+          {/* Payment Progress Card */}
           <Card>
             <CardHeader>
-              <CardTitle>{intl.formatMessage({ id: 'paymentProgress' })}</CardTitle>
-              <CardDescription>{intl.formatMessage({ id: 'yourRepaymentJourney' })}</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">{intl.formatMessage({ id: 'paymentProgress' })}</CardTitle>
+              <CardDescription className="text-sm">{intl.formatMessage({ id: 'yourRepaymentJourney' })}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -326,7 +329,7 @@ function LaureateDashboard() {
                   <div>
                     <div className="flex justify-between text-sm mb-2">
                       <span>{intl.formatMessage({ id: 'progress' })}</span>
-                      <span>
+                      <span className="font-medium">
                         {Math.round((loanInfo.totalPaid / loanInfo.totalAmount) * 100)}%
                       </span>
                     </div>
@@ -344,10 +347,11 @@ function LaureateDashboard() {
                     </div>
                   </div>
                 )}
+
                 {/* Loan breakdown if multiple loans */}
                 {loanInfo.loanCount > 1 && loanInfo.loanBreakdown && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <h4 className="text-sm font-medium mb-2">{intl.formatMessage({ id: 'loanBreakdown' })}</h4>
+                    <h4 className="text-sm font-medium mb-3">{intl.formatMessage({ id: 'loanBreakdown' })}</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       {loanInfo.loanBreakdown.active > 0 && (
                         <div className="flex justify-between">
@@ -379,72 +383,78 @@ function LaureateDashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Quick Actions Card */}
           <Card>
             <CardHeader>
-              <CardTitle>{intl.formatMessage({ id: 'quickActions' })}</CardTitle>
-              <CardDescription>{intl.formatMessage({ id: 'manageYourAccount' })}</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">{intl.formatMessage({ id: 'quickActions' })}</CardTitle>
+              <CardDescription className="text-sm">{intl.formatMessage({ id: 'manageYourAccount' })}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
                 <Button
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  className="w-full justify-start p-3 h-auto text-left"
                   onClick={() => navigate('/laureate/repayments')}
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
-                  <div className="text-left">
-                    <div className="font-medium">{intl.formatMessage({ id: 'viewPaymentSchedule' })}</div>
-                    <div className="text-xs text-muted-foreground">{intl.formatMessage({ id: 'seeUpcomingPayments' })}</div>
+                  <Calendar className="h-4 w-4 mr-3 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'viewPaymentSchedule' })}</div>
+                    <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'seeUpcomingPayments' })}</div>
                   </div>
                 </Button>
+
                 <Button
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  className="w-full justify-start p-3 h-auto text-left"
                   onClick={() => navigate('/laureate/loans')}
                 >
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  <div className="text-left">
-                    <div className="font-medium">{intl.formatMessage({ id: 'viewLoanHistory' })}</div>
-                    <div className="text-xs text-muted-foreground">{intl.formatMessage({ id: 'seeAllYourLoans' })}</div>
+                  <CreditCard className="h-4 w-4 mr-3 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'viewLoanHistory' })}</div>
+                    <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'seeAllYourLoans' })}</div>
                   </div>
                 </Button>
+
                 <Button
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  className="w-full justify-start p-3 h-auto text-left"
                   onClick={() => navigate('/laureate/profile')}
                 >
-                  <User className="h-4 w-4 mr-2" />
-                  <div className="text-left">
-                    <div className="font-medium">{intl.formatMessage({ id: 'updateProfile' })}</div>
-                    <div className="text-xs text-muted-foreground">{intl.formatMessage({ id: 'managePersonalInformation' })}</div>
+                  <User className="h-4 w-4 mr-3 flex-shrink-0" />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm">{intl.formatMessage({ id: 'updateProfile' })}</div>
+                    <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'managePersonalInformation' })}</div>
                   </div>
                 </Button>
+
                 <Button
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  className="w-full justify-start p-3 h-auto text-left"
                   onClick={downloadPaymentSchedule}
                   disabled={downloading}
                 >
-                  <Download className={`h-4 w-4 mr-2 ${downloading ? 'animate-spin' : ''}`} />
-                  <div className="text-left">
-                    <div className="font-medium">
+                  <Download className={`h-4 w-4 mr-3 flex-shrink-0 ${downloading ? 'animate-spin' : ''}`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm">
                       {downloading ? intl.formatMessage({ id: 'downloading' }) : intl.formatMessage({ id: 'downloadSchedule' })}
                     </div>
-                    <div className="text-xs text-muted-foreground">{intl.formatMessage({ id: 'exportPaymentPlan' })}</div>
+                    <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'exportPaymentPlan' })}</div>
                   </div>
                 </Button>
+
                 <Button
                   variant="ghost"
-                  className="w-full justify-start p-2 h-auto"
+                  className="w-full justify-start p-3 h-auto text-left"
                   onClick={downloadPaymentHistory}
                   disabled={downloading}
                 >
-                  <FileText className={`h-4 w-4 mr-2 ${downloading ? 'animate-spin' : ''}`} />
-                  <div className="text-left">
-                    <div className="font-medium">
+                  <FileText className={`h-4 w-4 mr-3 flex-shrink-0 ${downloading ? 'animate-spin' : ''}`} />
+                  <div className="min-w-0 flex-1">
+                    <div className="font-medium text-sm">
                       {downloading ? intl.formatMessage({ id: 'downloading' }) : intl.formatMessage({ id: 'downloadHistory' })}
                     </div>
-                    <div className="text-xs text-muted-foreground">{intl.formatMessage({ id: 'exportAllPayments' })}</div>
+                    <div className="text-xs text-muted-foreground truncate">{intl.formatMessage({ id: 'exportAllPayments' })}</div>
                   </div>
                 </Button>
               </div>
@@ -452,20 +462,21 @@ function LaureateDashboard() {
           </Card>
         </div>
       )}
-      {/* Overdue Alert */}
+
+      {/* Overdue Alert - Mobile Optimized */}
       {loanInfo.status === 'overdue' && (
         <Card className="border-red-200 bg-red-50">
-          <CardHeader>
-            <CardTitle className="text-red-800 flex items-center">
-              <AlertCircle className="h-5 w-5 mr-2" />
-              {intl.formatMessage({ id: 'paymentOverdue' })}
+          <CardHeader className="pb-3">
+            <CardTitle className="text-red-800 flex items-center text-base sm:text-lg">
+              <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+              <span>{intl.formatMessage({ id: 'paymentOverdue' })}</span>
             </CardTitle>
-            <CardDescription className="text-red-600">
+            <CardDescription className="text-red-600 text-sm">
               {intl.formatMessage({ id: 'overdueAlertDescription' })}
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <Button className="bg-red-600 text-white hover:bg-red-700">
+          <CardContent className="pt-0">
+            <Button className="bg-red-600 text-white hover:bg-red-700 w-full sm:w-auto">
               <Phone className="h-4 w-4 mr-2" />
               {intl.formatMessage({ id: 'contactFinanceOffice' })}
             </Button>

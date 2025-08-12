@@ -4,8 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { User, Save, Edit } from 'lucide-react';
-import { intl } from '@/i18n'; // Import intl from the i18n module
+import { User, Save, Edit, GraduationCap } from 'lucide-react';
+import { intl } from '@/i18n';
 import api from '@/login/api';
 
 function LaureateProfile() {
@@ -79,187 +79,322 @@ function LaureateProfile() {
   };
 
   if (loading) {
-    return <div className="p-6">{intl.formatMessage({ id: 'loadingProfile' })}</div>;
+    return (
+      <div className="p-3 sm:p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-8 bg-gray-200 rounded w-48"></div>
+          <div className="h-4 bg-gray-200 rounded w-64"></div>
+          <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2">
+            {[...Array(2)].map((_, i) => (
+              <div key={i} className="border rounded-lg p-4 space-y-4">
+                <div className="h-6 bg-gray-200 rounded w-32"></div>
+                <div className="space-y-3">
+                  {[...Array(4)].map((_, j) => (
+                    <div key={j} className="h-10 bg-gray-200 rounded"></div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6 p-4">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-3xl font-bold text-gray-900">
+    <div className="space-y-4 sm:space-y-6 p-3 sm:p-4">
+      {/* Header Section - Mobile Optimized */}
+      <div className="space-y-3 sm:space-y-0 sm:flex sm:justify-between sm:items-start">
+        <div className="space-y-1 sm:space-y-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
             {intl.formatMessage({ id: 'myProfile' })}
           </h2>
-          <p className="text-gray-600 mt-2">
+          <p className="text-sm sm:text-base text-gray-600">
             {intl.formatMessage({ id: 'managePersonalInformation' })}
           </p>
         </div>
         <Button
           onClick={() => isEditing ? handleSave() : setIsEditing(true)}
           disabled={saving}
+          className="w-full sm:w-auto min-w-[120px]"
         >
           {isEditing ? (
             <>
               <Save className="h-4 w-4 mr-2" />
-              {saving ? intl.formatMessage({ id: 'saving' }) : intl.formatMessage({ id: 'saveChanges' })}
+              <span className="hidden sm:inline">
+                {saving ? intl.formatMessage({ id: 'saving' }) : intl.formatMessage({ id: 'saveChanges' })}
+              </span>
+              <span className="sm:hidden">
+                {saving ? intl.formatMessage({ id: 'saving' }) : 'Save'}
+              </span>
             </>
           ) : (
             <>
               <Edit className="h-4 w-4 mr-2" />
-              {intl.formatMessage({ id: 'editProfile' })}
+              <span className="hidden sm:inline">{intl.formatMessage({ id: 'editProfile' })}</span>
+              <span className="sm:hidden">Edit</span>
             </>
           )}
         </Button>
       </div>
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2" />
-              {intl.formatMessage({ id: 'personalInformation' })}
+
+      {/* Profile Cards Grid - Mobile Responsive */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-2">
+        {/* Personal Information Card */}
+        <Card className="order-1">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center text-lg sm:text-xl">
+              <User className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+              <span>{intl.formatMessage({ id: 'personalInformation' })}</span>
             </CardTitle>
-            <CardDescription>{intl.formatMessage({ id: 'basicPersonalDetails' })}</CardDescription>
+            <CardDescription className="text-sm">
+              {intl.formatMessage({ id: 'basicPersonalDetails' })}
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
+          <CardContent className="space-y-4 sm:space-y-5">
+            {/* Name Fields - Mobile Stacked */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="first_name">{intl.formatMessage({ id: 'firstName' })}</Label>
+                <Label htmlFor="first_name" className="text-sm font-medium">
+                  {intl.formatMessage({ id: 'firstName' })}
+                </Label>
                 <Input
                   id="first_name"
                   value={profile.user.first_name || ''}
                   onChange={(e) => handleChange('user.first_name', e.target.value)}
                   disabled={!isEditing}
+                  className="h-10"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="last_name">{intl.formatMessage({ id: 'lastName' })}</Label>
+                <Label htmlFor="last_name" className="text-sm font-medium">
+                  {intl.formatMessage({ id: 'lastName' })}
+                </Label>
                 <Input
                   id="last_name"
                   value={profile.user.last_name || ''}
                   onChange={(e) => handleChange('user.last_name', e.target.value)}
                   disabled={!isEditing}
+                  className="h-10"
                 />
               </div>
             </div>
+
+            {/* Email Field */}
             <div className="space-y-2">
-              <Label htmlFor="email">{intl.formatMessage({ id: 'email' })}</Label>
+              <Label htmlFor="email" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'email' })}
+              </Label>
               <Input
                 id="email"
                 value={profile.user.email || ''}
                 disabled={true}
-                className="bg-gray-50"
+                className="bg-gray-50 h-10"
               />
-              <p className="text-xs text-gray-500">{intl.formatMessage({ id: 'emailCannotBeChanged' })}</p>
+              <p className="text-xs text-gray-500">
+                {intl.formatMessage({ id: 'emailCannotBeChanged' })}
+              </p>
             </div>
+
+            {/* Phone Field */}
             <div className="space-y-2">
-              <Label htmlFor="phone">{intl.formatMessage({ id: 'phone' })}</Label>
+              <Label htmlFor="phone" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'phone' })}
+              </Label>
               <Input
                 id="phone"
                 value={profile.user.phone || ''}
                 onChange={(e) => handleChange('user.phone', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
+                placeholder="Optional"
               />
             </div>
+
+            {/* Birth Date Field */}
             <div className="space-y-2">
-              <Label htmlFor="birth_date">{intl.formatMessage({ id: 'birthDate' })}</Label>
+              <Label htmlFor="birth_date" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'birthDate' })}
+              </Label>
               <Input
                 id="birth_date"
                 type="date"
                 value={profile.user.birth_date || ''}
                 onChange={(e) => handleChange('user.birth_date', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
               />
             </div>
+
+            {/* Address Field */}
             <div className="space-y-2">
-              <Label htmlFor="address">{intl.formatMessage({ id: 'address' })}</Label>
+              <Label htmlFor="address" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'address' })}
+              </Label>
               <Textarea
                 id="address"
                 value={profile.user.address || ''}
                 onChange={(e) => handleChange('user.address', e.target.value)}
                 disabled={!isEditing}
                 rows={3}
+                className="resize-none"
+                placeholder="Optional"
               />
             </div>
           </CardContent>
         </Card>
-        <Card>
-          <CardHeader>
-            <CardTitle>{intl.formatMessage({ id: 'academicInformation' })}</CardTitle>
-            <CardDescription>{intl.formatMessage({ id: 'academicDetailsAndEmergencyContact' })}</CardDescription>
+
+        {/* Academic Information Card */}
+        <Card className="order-2">
+          <CardHeader className="pb-4">
+            <CardTitle className="flex items-center text-lg sm:text-xl">
+              <GraduationCap className="h-4 w-4 sm:h-5 sm:w-5 mr-2 flex-shrink-0" />
+              <span>{intl.formatMessage({ id: 'academicInformation' })}</span>
+            </CardTitle>
+            <CardDescription className="text-sm">
+              {intl.formatMessage({ id: 'academicDetailsAndEmergencyContact' })}
+            </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 sm:space-y-5">
+            {/* Student ID Field */}
             <div className="space-y-2">
-              <Label htmlFor="student_id">{intl.formatMessage({ id: 'studentId' })}</Label>
+              <Label htmlFor="student_id" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'studentId' })}
+              </Label>
               <Input
                 id="student_id"
                 value={profile.student_id || ''}
                 disabled={true}
-                className="bg-gray-50"
+                className="bg-gray-50 h-10 font-mono"
               />
-              <p className="text-xs text-gray-500">{intl.formatMessage({ id: 'studentIdCannotBeChanged' })}</p>
+              <p className="text-xs text-gray-500">
+                {intl.formatMessage({ id: 'studentIdCannotBeChanged' })}
+              </p>
             </div>
+
+            {/* Institution Field */}
             <div className="space-y-2">
-              <Label htmlFor="institution">{intl.formatMessage({ id: 'institution' })}</Label>
+              <Label htmlFor="institution" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'institution' })}
+              </Label>
               <Input
                 id="institution"
                 value={profile.institution || ''}
                 onChange={(e) => handleChange('institution', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
               />
             </div>
+
+            {/* Field of Study */}
             <div className="space-y-2">
-              <Label htmlFor="field_of_study">{intl.formatMessage({ id: 'fieldOfStudy' })}</Label>
+              <Label htmlFor="field_of_study" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'fieldOfStudy' })}
+              </Label>
               <Input
                 id="field_of_study"
                 value={profile.field_of_study || ''}
                 onChange={(e) => handleChange('field_of_study', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+
+            {/* Graduation Year & GPA - Mobile Stacked */}
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="graduation_year">{intl.formatMessage({ id: 'graduationYear' })}</Label>
+                <Label htmlFor="graduation_year" className="text-sm font-medium">
+                  {intl.formatMessage({ id: 'graduationYear' })}
+                </Label>
                 <Input
                   id="graduation_year"
                   type="number"
                   value={profile.graduation_year || ''}
                   onChange={(e) => handleChange('graduation_year', e.target.value)}
                   disabled={!isEditing}
+                  className="h-10"
+                  min="2000"
+                  max="2030"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="gpa">{intl.formatMessage({ id: 'gpa' })}</Label>
+                <Label htmlFor="gpa" className="text-sm font-medium">
+                  {intl.formatMessage({ id: 'gpa' })}
+                </Label>
                 <Input
                   id="gpa"
                   type="number"
                   step="0.01"
+                  min="0"
                   max="4.00"
                   value={profile.gpa || ''}
                   onChange={(e) => handleChange('gpa', e.target.value)}
                   disabled={!isEditing}
+                  className="h-10"
+                  placeholder="0.00"
                 />
               </div>
             </div>
+
+            {/* Emergency Contact Name */}
             <div className="space-y-2">
-              <Label htmlFor="emergency_contact_name">{intl.formatMessage({ id: 'emergencyContactName' })}</Label>
+              <Label htmlFor="emergency_contact_name" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'emergencyContactName' })}
+              </Label>
               <Input
                 id="emergency_contact_name"
                 value={profile.emergency_contact_name || ''}
                 onChange={(e) => handleChange('emergency_contact_name', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
+                placeholder="Optional"
               />
             </div>
+
+            {/* Emergency Contact Phone */}
             <div className="space-y-2">
-              <Label htmlFor="emergency_contact_phone">{intl.formatMessage({ id: 'emergencyContactPhone' })}</Label>
+              <Label htmlFor="emergency_contact_phone" className="text-sm font-medium">
+                {intl.formatMessage({ id: 'emergencyContactPhone' })}
+              </Label>
               <Input
                 id="emergency_contact_phone"
                 value={profile.emergency_contact_phone || ''}
                 onChange={(e) => handleChange('emergency_contact_phone', e.target.value)}
                 disabled={!isEditing}
+                className="h-10"
+                placeholder="Optional"
               />
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Mobile Edit/Save Button - Fixed Bottom on Mobile */}
+      {isEditing && (
+        <div className="sm:hidden fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-200 shadow-lg">
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => setIsEditing(false)}
+              className="flex-1"
+              disabled={saving}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={saving}
+              className="flex-1"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {saving ? 'Saving...' : 'Save Changes'}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Add padding bottom on mobile when editing to account for fixed button */}
+      {isEditing && <div className="sm:hidden h-20"></div>}
     </div>
   );
 }
